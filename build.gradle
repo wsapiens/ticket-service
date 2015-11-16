@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE")
+        classpath("org.flywaydb:flyway-gradle-plugin:3.2.1")
     }
 }
 
@@ -11,6 +12,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'org.flywaydb.flyway'
 
 jar {
     baseName = 'ticket-service'
@@ -51,6 +53,7 @@ dependencies {
             "org.quartz-scheduler:quartz:2.2.1",
             "org.jolokia:jolokia-core",
             "org.aspectj:aspectjweaver",
+            "org.flywaydb:flyway-core"
             )
     testCompile("junit:junit",
                 "org.springframework:spring-test",
@@ -58,6 +61,12 @@ dependencies {
                 "org.powermock:powermock-api-mockito:1.6.2",
                 "org.powermock:powermock-module-junit4:1.6.2",
                 )
+}
+
+flyway {
+    user = 'sa'
+    password = ''
+    schemas = ['PUBLIC']
 }
 
 task wrapper(type: Wrapper) {

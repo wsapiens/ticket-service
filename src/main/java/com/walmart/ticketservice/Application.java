@@ -1,18 +1,33 @@
 package com.walmart.ticketservice;
 
+import static com.walmart.ticketservice.consts.Consts.MODE_TEST;
+
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.SimpleCommandLinePropertySource;
 
 import com.walmart.ticketservice.config.ApplicationConfig;
+import com.walmart.ticketservice.config.CommandLineConfig;
 
 public class Application {
 
-	static Logger log = Logger.getLogger(Application.class);
+	private static Logger log = Logger.getLogger(Application.class);
+
+	private static ApplicationContext ctx;
 
 	public static void main(String [] args) {
-		SpringApplication application = new SpringApplication(ApplicationConfig.class);
-		@SuppressWarnings("unused")
-		ApplicationContext ctx = application.run(args);
+		@SuppressWarnings("rawtypes")
+		PropertySource ps = new SimpleCommandLinePropertySource(args);
+		String mode = (String) ps.getProperty("mode");
+		if (args.length == 0  || !MODE_TEST.equalsIgnoreCase(mode)) {
+			SpringApplication application = new SpringApplication(ApplicationConfig.class);
+			ctx = application.run(args);
+		} else {
+			ctx = new AnnotationConfigApplicationContext(CommandLineConfig.class);
+			//TODO some action
+		}
 	}
 }
