@@ -1,0 +1,4 @@
+/target/
+/build/
+/ticket-service.lock.db
+/ticket-service.mv.db
