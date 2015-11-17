@@ -1,6 +1,6 @@
 package com.walmart.ticketservice;
 
-import static com.walmart.ticketservice.consts.Consts.MODE_TEST;
+import static com.walmart.ticketservice.consts.ServiceConsts.MODE_TEST;
 
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
