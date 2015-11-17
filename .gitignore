@@ -2,3 +2,4 @@
 /build/
 /ticket-service.lock.db
 /ticket-service.mv.db
+/.DS_Store
