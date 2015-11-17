@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import com.walmart.ticketservice.database.repository.VenueRepository;
 import com.walmart.ticketservice.error.TicketServiceException;
 import com.walmart.ticketservice.util.ConfirmationCodeUtils;
 
+@Service("ticketService")
 @Transactional(value="transactionManager", isolation= Isolation.REPEATABLE_READ)
 public class TicketServiceImpl implements TicketService {
 
