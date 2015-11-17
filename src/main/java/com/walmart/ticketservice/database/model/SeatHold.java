@@ -24,7 +24,7 @@ public class SeatHold implements Serializable {
 
 	private static final long serialVersionUID = -655586672728569618L;
 
-	private Long id;
+	private Integer id;
 	/** timestamp when seatHold made */
 	private Date holdTime;
 	private Customer customer;
@@ -35,10 +35,10 @@ public class SeatHold implements Serializable {
 	@Column(name="ID")
 	@SequenceGenerator(name="hold_seq", sequenceName="SEAT_HOLD_SEQ")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="hold_seq")
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

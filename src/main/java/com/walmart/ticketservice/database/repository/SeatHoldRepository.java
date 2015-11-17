@@ -9,7 +9,7 @@ import java.util.List;
 import com.walmart.ticketservice.database.model.Customer;
 
 @Repository
-public interface SeatHoldRepository extends JpaRepository<SeatHold, Long> {
+public interface SeatHoldRepository extends JpaRepository<SeatHold, Integer> {
 	List<SeatHold> findByConfirmationCodeIsNullAndHoldTimeBefore(Date date);
 	List<SeatHold> findByCustomer(Customer customer);
 }

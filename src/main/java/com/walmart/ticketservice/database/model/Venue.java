@@ -1,5 +1,6 @@
 package com.walmart.ticketservice.database.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +15,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name ="VENUE")
-public class Venue {
+public class Venue implements Serializable {
+
+	private static final long serialVersionUID = 2703093699428542040L;
 
 	private Integer levelId;
 	private String levelName;

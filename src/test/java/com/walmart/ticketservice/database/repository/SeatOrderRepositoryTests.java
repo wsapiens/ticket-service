@@ -45,7 +45,7 @@ public class SeatOrderRepositoryTests {
 	@Autowired
 	private VenueRepository venueRepository;
 
-	private Long holdId;
+	private Integer holdId;
 
 	@Before
 	public void setUp() throws Exception {
