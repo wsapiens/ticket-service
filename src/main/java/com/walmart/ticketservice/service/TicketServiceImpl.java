@@ -57,9 +57,9 @@ public class TicketServiceImpl implements TicketService {
 	public String reserveSeats(int seatHoldId, String customerEmail) {
 		SeatHold seatHold = seatHoldRepository.findOne(seatHoldId);
 		if(null == seatHold) {
-			log.info(String.join(": ", "No SeatHold found. it must be expired, seatHoldId", String.valueOf(seatHoldId)) );
-			return null;
+			throw new TicketServiceException(String.join(": ", "No SeatHold found. it must be expired, seatHoldId", String.valueOf(seatHoldId)) );
 		}
+
 		Customer customer = seatHold.getCustomer();
 		if(null == customer || !customer.getEmail().equalsIgnoreCase(customerEmail)) {
 			StringBuilder errorMessage = new StringBuilder("Customer Validation on SeatHold fail, seatHoldId: ")
