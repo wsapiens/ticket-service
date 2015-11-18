@@ -110,7 +110,7 @@ public class TicketServiceImpl implements TicketService {
 			seatHold = seatHoldRepository.save(seatHold);
 			String message = new StringBuilder("hold ")
 								.append(numSeats - numSeatsToHold)
-								.append("seats for email: ")
+								.append(" seats for email: ")
 								.append(customerEmail)
 								.toString();
 			log.info(message);
@@ -120,16 +120,26 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public String reserveSeats(int seatHoldId, String customerEmail) {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime expired = now.minusSeconds(SEAT_HOLD_EXPIRATION_TIME_IN_SECONDS);
+		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
+
 		SeatHold seatHold = seatHoldRepository.findOne(seatHoldId);
 		if(null == seatHold) {
-			String errorMessage = String.join(": ", "No SeatHold found. it must be expired, seatHoldId", String.valueOf(seatHoldId));
+			String errorMessage = String.join(": ", "fail on reservation, no SeatHold found. it probably already expired, seatHoldId", String.valueOf(seatHoldId));
+			log.error(errorMessage);
+			throw new TicketServiceException(errorMessage);
+		}
+		if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
+			seatHoldRepository.delete(seatHold);
+			String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));
 			log.error(errorMessage);
 			throw new TicketServiceException(errorMessage);
 		}
 
 		Customer customer = seatHold.getCustomer();
 		if(null == customer || !StringUtils.equalsIgnoreCase(customer.getEmail(), customerEmail)) {
-			StringBuilder errorMessage = new StringBuilder("Customer Validation on SeatHold fail, seatHoldId: ")
+			StringBuilder errorMessage = new StringBuilder("Customer Eamil Validation on SeatHold fail, seatHoldId: ")
 												.append(seatHoldId)
 												.append(", customerEmail: ")
 												.append(customerEmail);
