@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.walmart.ticketservice.database.model.Customer;
@@ -26,7 +25,6 @@ import com.walmart.ticketservice.database.model.SeatHold;
 
 @ContextConfiguration(classes = {RepositoryTestConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(defaultRollback=true)
 @Transactional
 @DirtiesContext
 public class SeatHoldRepositoryTests {
