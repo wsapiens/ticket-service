@@ -16,7 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.walmart.ticketservice.database.model.SeatHold;
-import com.walmart.ticketservice.error.TicketServiceException;
+import com.walmart.ticketservice.error.CustomerValidationException;
+import com.walmart.ticketservice.error.SeatHoldNotFoundException;
 
 @ContextConfiguration(classes = ServiceTestConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -76,7 +77,7 @@ public class TicketServiceTests {
 	 * Test with passing SeatHoldId which is not existing on database
 	 * This is test for simulating the case the SeatHold is expired and deleted already
 	 */
-	@Test(expected=TicketServiceException.class)
+	@Test(expected=SeatHoldNotFoundException.class)
 	public void testReserveSeatsWithExpiredSeatHoldId() {
 		ticketService.reserveSeats(5, "homer@simpson.com");
 	}
@@ -85,7 +86,7 @@ public class TicketServiceTests {
 	 * This test is for the case where seatHoldId is gone from database
 	 * most likely seatHold is already expired and deleted to free hold seats
 	 */
-	@Test(expected=TicketServiceException.class)
+	@Test(expected=SeatHoldNotFoundException.class)
 	public void testReserveSeatsWithNonExistingSeatHoldId() {
 		ticketService.reserveSeats(9, "homer@simpson.com");
 	}
@@ -94,7 +95,7 @@ public class TicketServiceTests {
 	 * This test is for the case where given wrong email address for the seatHold
 	 * It should throw exception for email verification failure
 	 */
-	@Test(expected=TicketServiceException.class)
+	@Test(expected=CustomerValidationException.class)
 	public void testReserveSeatsWithInvalidEmail() {
 		ticketService.reserveSeats(11, "marge@simpson.com");
 	}

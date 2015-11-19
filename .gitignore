@@ -3,3 +3,4 @@
 /ticket-service.lock.db
 /ticket-service.mv.db
 /.DS_Store
+/ticket-service.trace.db
