@@ -30,9 +30,7 @@ public class ApplicationConfig extends SpringBootServletInitializer implements A
 
 	@Bean
 	public ServiceProperties serviceProperties() {
-		ServiceProperties properties = new ServiceProperties();
-		properties.setSeatHoldExpireTime(seatHoldExpireTime);
-		return properties;
+		return new ServiceProperties(Long.valueOf(seatHoldExpireTime));
 	}
 
 	@Override

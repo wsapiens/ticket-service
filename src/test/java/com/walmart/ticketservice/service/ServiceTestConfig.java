@@ -31,9 +31,7 @@ public class ServiceTestConfig {
 
 	@Bean
 	public ServiceProperties serviceProperties() {
-		ServiceProperties properties = new ServiceProperties();
-		properties.setSeatHoldExpireTime("120");
-		return properties;
+		return new ServiceProperties(Long.valueOf("120"));
 	}
 
 	@Bean
