@@ -1,7 +1,5 @@
 package com.walmart.ticketservice.service;
 
-import static com.walmart.ticketservice.consts.ServiceConsts.SEAT_HOLD_EXPIRATION_TIME_IN_SECONDS;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.walmart.ticketservice.config.ServiceProperties;
 import com.walmart.ticketservice.consts.VenueLevel;
 import com.walmart.ticketservice.database.model.Customer;
 import com.walmart.ticketservice.database.model.SeatHold;
@@ -47,6 +46,9 @@ public class TicketServiceImpl implements TicketService {
 	@Autowired
 	private SeatOrderRepository seatOrderRepository;
 
+	@Autowired
+	private ServiceProperties serviceProperties;
+
 	@Override
 	public int numSeatsAvailable(Optional<Integer> venueLevel) {
 		if(venueLevel.isPresent()) {
@@ -69,7 +71,7 @@ public class TicketServiceImpl implements TicketService {
 			throw new CustomerValidationException();
 		}
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expired = now.minusSeconds(SEAT_HOLD_EXPIRATION_TIME_IN_SECONDS);
+		LocalDateTime expired = now.minusSeconds(serviceProperties.getSeatHoldExpireTime());
 		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
 		Instant nowInstant = now.atZone(ZoneId.systemDefault()).toInstant();
 
@@ -129,7 +131,7 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public String reserveSeats(int seatHoldId, String customerEmail) {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expired = now.minusSeconds(SEAT_HOLD_EXPIRATION_TIME_IN_SECONDS);
+		LocalDateTime expired = now.minusSeconds(serviceProperties.getSeatHoldExpireTime());
 		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
 
 		// find SeatHold and verify it

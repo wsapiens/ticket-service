@@ -16,6 +16,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.walmart.ticketservice.config.ServiceProperties;
 import com.walmart.ticketservice.database.model.Customer;
 import com.walmart.ticketservice.database.model.SeatHold;
 import com.walmart.ticketservice.database.model.SeatOrder;
@@ -27,6 +28,13 @@ import com.walmart.ticketservice.database.repository.VenueRepository;
 
 @Configuration
 public class ServiceTestConfig {
+
+	@Bean
+	public ServiceProperties serviceProperties() {
+		ServiceProperties properties = new ServiceProperties();
+		properties.setSeatHoldExpireTime("120");
+		return properties;
+	}
 
 	@Bean
 	public VenueRepository venueRepository() {

@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.walmart.ticketservice.service.ResetService;
 
 /**
- * Controller for management action
+ * Controller for administrative action
  * 
  * @author spark
  *
  */
 @RestController
-@RequestMapping(value = "/management")
-public class ManagementController {
+@RequestMapping(value = "/admin")
+public class AdminController {
 
 	@Autowired
 	private ResetService resetService;
