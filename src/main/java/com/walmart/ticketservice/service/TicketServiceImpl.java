@@ -144,7 +144,6 @@ public class TicketServiceImpl implements TicketService {
 
 		if( StringUtils.isEmpty(seatHold.getConfirmationCode()) ) {
 			if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
-				seatHoldRepository.delete(seatHold);
 				String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));
 				log.error(errorMessage);
 				throw new SeatHoldNotFoundException(errorMessage);
