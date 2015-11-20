@@ -2,7 +2,7 @@
 *  Walmart Coding Assignment
 *  TicketService Homework
 *
-*         Steve Park (11/20/2015)
+*  Steve(Sang Ki) Park 11/20/2015
 **********************************
 
 This ticket service allows user to create multiple holds and reservations for one customer.
