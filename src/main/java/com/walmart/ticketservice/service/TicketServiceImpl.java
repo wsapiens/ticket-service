@@ -141,13 +141,15 @@ public class TicketServiceImpl implements TicketService {
 			log.error(errorMessage);
 			throw new SeatHoldNotFoundException(errorMessage);
 		}
-		if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
-			seatHoldRepository.delete(seatHold);
-			String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));
-			log.error(errorMessage);
-			throw new SeatHoldNotFoundException(errorMessage);
-		}
-		if( !StringUtils.isEmpty(seatHold.getConfirmationCode()) ) {
+
+		if( StringUtils.isEmpty(seatHold.getConfirmationCode()) ) {
+			if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
+				seatHoldRepository.delete(seatHold);
+				String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));
+				log.error(errorMessage);
+				throw new SeatHoldNotFoundException(errorMessage);
+			}
+		} else {
 			String message = new StringBuilder("The seatHold is already reservated, seatHoldId: ")
 								.append(seatHoldId)
 								.append(", customerEmail: ")
@@ -171,6 +173,7 @@ public class TicketServiceImpl implements TicketService {
 		// generate confirmation code and check in the hold as reservation
 		String code = ConfirmationCodeUtils.generateCode(seatHoldId, customerEmail);
 		seatHold.setConfirmationCode(code);
+		seatHold.setReservationTime(new Date());
 		seatHoldRepository.save(seatHold);
 		String message = new StringBuilder("Reserved Seat for email: ")
 							.append(customerEmail)

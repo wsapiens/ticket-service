@@ -29,6 +29,7 @@ public class SeatHold implements Serializable {
 	private Date holdTime;
 	private Customer customer;
 	private String confirmationCode;
+	private Date reservationTime;
 	private Set<SeatOrder> seatOrders = new HashSet<>();
 
 	@Id
@@ -59,12 +60,20 @@ public class SeatHold implements Serializable {
 		this.customer = customer;
 	}
 
-	@Column(name="RESERVATION_CONFIRMATION_CODE", insertable=true, updatable=false)
+	@Column(name="RESERVATION_CONFIRMATION_CODE")
 	public String getConfirmationCode() {
 		return confirmationCode;
 	}
 	public void setConfirmationCode(String confirmationCode) {
 		this.confirmationCode = confirmationCode;
+	}
+
+	@Column(name="RESERVATION_TIME")
+	public Date getReservationTime() {
+		return reservationTime;
+	}
+	public void setReservationTime(Date reservationTime) {
+		this.reservationTime = reservationTime;
 	}
 
 	@OneToMany(cascade={CascadeType.ALL}, mappedBy="seatHold", fetch=FetchType.LAZY)
