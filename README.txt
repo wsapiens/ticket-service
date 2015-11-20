@@ -104,6 +104,11 @@ $ curl -X POST http://localhost:9797/ticket-service/v1/hold/num-seats/20/email/h
 {"holdId":51,"customerEmail":"homer@simpson.com","details":[{"venueLevel":3,"numOfSeats":20}]}
 
 
+* if you are on windows system with cygwin, then suggest to wrap the url by double quote
+
+C:\>curl -X POST "http://localhost:9797/ticket-service/v1/hold/num-seats/900/email/homer@simpson.com/venue?minLevel=1&maxLevel=4"
+{"holdId":61,"customerEmail":"homer@simpson.com","details":[{"venueLevel":2,"numOfSeats":900}]}
+
 
 -. request to reserve seat by holdId
    endpoint: /ticket-service/v1/hold/{holdId}/email/{customerEmail}/reserve
