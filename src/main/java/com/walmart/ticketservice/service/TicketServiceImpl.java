@@ -119,10 +119,10 @@ public class TicketServiceImpl implements TicketService {
 			seatHold.setHoldTime(Date.from(nowInstant));
 			seatHold = seatHoldRepository.save(seatHold);
 			String message = new StringBuilder("hold ")
-								.append(numSeats - numSeatsToHold)
-								.append(" seats for email: ")
-								.append(customerEmail)
-								.toString();
+					.append(numSeats - numSeatsToHold)
+					.append(" seats for email: ")
+					.append(customerEmail)
+					.toString();
 			log.info(message);
 		}
 		return seatHold;
@@ -134,7 +134,7 @@ public class TicketServiceImpl implements TicketService {
 		LocalDateTime expired = now.minusSeconds(serviceProperties.getSeatHoldExpireTime());
 		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
 
-		// find SeatHold and verify it
+		// find SeatHold
 		SeatHold seatHold = seatHoldRepository.findOne(seatHoldId);
 		if(null == seatHold) {
 			String errorMessage = String.join(": ", "fail on reservation, no SeatHold found. it probably already expired, seatHoldId", String.valueOf(seatHoldId));
@@ -142,6 +142,18 @@ public class TicketServiceImpl implements TicketService {
 			throw new SeatHoldNotFoundException(errorMessage);
 		}
 
+		// verify customer info first
+		Customer customer = seatHold.getCustomer();
+		if(null == customer || !StringUtils.equalsIgnoreCase(customer.getEmail(), customerEmail)) {
+			StringBuilder errorMessage = new StringBuilder("Customer Eamil Validation on SeatHold fail, seatHoldId: ")
+					.append(seatHoldId)
+					.append(", customerEmail: ")
+					.append(customerEmail);
+			log.error(errorMessage.toString());
+			throw new CustomerValidationException(errorMessage.toString());
+		}
+
+		// verify seatHold
 		if( StringUtils.isEmpty(seatHold.getConfirmationCode()) ) {
 			if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
 				String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));
@@ -150,23 +162,12 @@ public class TicketServiceImpl implements TicketService {
 			}
 		} else {
 			String message = new StringBuilder("The seatHold is already reservated, seatHoldId: ")
-								.append(seatHoldId)
-								.append(", customerEmail: ")
-								.append(customerEmail)
-								.toString();
+					.append(seatHoldId)
+					.append(", customerEmail: ")
+					.append(customerEmail)
+					.toString();
 			log.warn(message);
 			return seatHold.getConfirmationCode();
-		}
-
-		// verify customer info
-		Customer customer = seatHold.getCustomer();
-		if(null == customer || !StringUtils.equalsIgnoreCase(customer.getEmail(), customerEmail)) {
-			StringBuilder errorMessage = new StringBuilder("Customer Eamil Validation on SeatHold fail, seatHoldId: ")
-												.append(seatHoldId)
-												.append(", customerEmail: ")
-												.append(customerEmail);
-			log.error(errorMessage.toString());
-			throw new CustomerValidationException(errorMessage.toString());
 		}
 
 		// generate confirmation code and check in the hold as reservation
@@ -175,12 +176,12 @@ public class TicketServiceImpl implements TicketService {
 		seatHold.setReservationTime(new Date());
 		seatHoldRepository.save(seatHold);
 		String message = new StringBuilder("Reserved Seat for email: ")
-							.append(customerEmail)
-							.append(", seatHoldId: ")
-							.append(seatHoldId)
-							.append(", confirmationCode: ")
-							.append(code)
-							.toString();
+				.append(customerEmail)
+				.append(", seatHoldId: ")
+				.append(seatHoldId)
+				.append(", confirmationCode: ")
+				.append(code)
+				.toString();
 		log.info(message);
 		return code;
 	}
