@@ -240,3 +240,5 @@ $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher 
 2015-11-19 23:45:52.909  INFO   --- [           main] c.w.ticketservice.aop.ServiceTracker     : [ReqOut] ResetServiceImpl ( void com.walmart.ticketservice.service.ResetService.reset() )
 Datbase has been cleaned up with removing all hold, reservation and customer info
 
+
+* if want to run with default configuration, then you can omit --spring.config.location property in the command line
