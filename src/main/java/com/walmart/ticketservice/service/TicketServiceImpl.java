@@ -28,8 +28,16 @@ import com.walmart.ticketservice.error.CustomerValidationException;
 import com.walmart.ticketservice.error.SeatHoldNotFoundException;
 import com.walmart.ticketservice.util.ConfirmationCodeUtils;
 
+/**
+ * class for TicketService implementation
+ * take Serializable isolation level for ultimate concurrency safety
+ * but performance will be downgraded
+ * 
+ * @author spark
+ *
+ */
 @Service("ticketService")
-@Transactional(value="transactionManager", isolation= Isolation.REPEATABLE_READ)
+@Transactional(value="transactionManager", isolation= Isolation.SERIALIZABLE)
 public class TicketServiceImpl implements TicketService {
 
 	private static Logger log = Logger.getLogger(TicketServiceImpl.class);
