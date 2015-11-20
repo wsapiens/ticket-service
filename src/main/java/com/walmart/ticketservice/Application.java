@@ -9,6 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 
+import com.walmart.ticketservice.command.CommandHandler;
 import com.walmart.ticketservice.config.ApplicationConfig;
 import com.walmart.ticketservice.config.CommandLineConfig;
 
@@ -26,8 +27,10 @@ public class Application {
 			SpringApplication application = new SpringApplication(ApplicationConfig.class);
 			ctx = application.run(args);
 		} else {
+			log.info("run in command line test mode");
 			ctx = new AnnotationConfigApplicationContext(CommandLineConfig.class);
-			//TODO some action
+			CommandHandler handler = (CommandHandler) ctx.getBean("commandHandler");
+			handler.execute(ps);
 		}
 	}
 }
