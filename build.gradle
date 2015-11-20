@@ -46,11 +46,7 @@ dependencies {
             "com.h2database:h2",
             "org.hibernate:hibernate-core",
             "org.hibernate:hibernate-entitymanager",
-            "org.webjars:jquery-ui-themes:1.11.3",
-            "org.webjars:datatables:1.10.5",
-            "org.webjars:datatables-plugins:ca6ec50",
             "javax.servlet:jstl",
-            "org.quartz-scheduler:quartz:2.2.1",
             "org.jolokia:jolokia-core",
             "org.aspectj:aspectjweaver",
             "org.flywaydb:flyway-core"
