@@ -153,6 +153,8 @@ All SeatHolds with Customer Info have been deleted!
 
 This service also provides command line test mode to test this service without using server mode and internet.
 Below is example command with command line properties. log line and result will come in same console
+This is just for running the service in command line, but it initiate whole spring context and other resources again
+for every command and destroy them. So it is not efficient way to test the service.
 
 1) command to find available seats
    command line property: --mode=test --action=search --level={venueLevel}
