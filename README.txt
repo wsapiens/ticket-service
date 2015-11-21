@@ -35,7 +35,6 @@ $ gradle clean test jar bootRepackage
 
 
 
-
 ===================================
 2. Run As Server Mode
 ===================================
@@ -73,7 +72,6 @@ $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher 
 
 
 
-
 ===================================
 3. Send Request to Service
 ===================================
@@ -82,18 +80,25 @@ After starting service as server mode, service will expect receiving request ove
 If curl command is available, then you can send requests like below. If curl is not available, then REST client plugin for Chrome or FireFox
 Browser can be used. All the requests will be handled asynchronously
 
--. request to find available seats
-   endpoint: /ticket-service/v1/venue/{venueLevel}/available-seats
+1) request to find available seats
+   endpoint: /ticket-service/v1/available-seats/venue?level={venueLevel}
 
-$ curl -X GET http://localhost:9797/ticket-service/v1/venue/3/available-seats
+$ curl -X GET http://localhost:9797/ticket-service/v1/available-seats/venue?level=3
 {"venueLevel":3,"numberOfAvailableSeats":600}
 
 
+*level is queryParam and optional, so you can omit the param and it will give total available seats through whole levels
 
--. request to find and hold seats
+$ curl -X GET http://localhost:9797/ticket-service/v1/available-seats/venue
+{"venueLevel":null,"numberOfAvailableSeats":5350}
+
+
+
+2) request to find and hold seats
    endpoint: /ticket-service/v1/hold/num-seats/{numberOfSeats}/email/{customerEmail}/venue?minLevel={minLevel}&maxLevel={maxLevel}
-   minLevel and maxLevel are queryparam and optional. If no minLevel, it will search from 1 (Orchestra). also If no maxLevel, 
-   then it will search to 4 (Balcony 2). If response take some time, it will return later
+   minLevel and maxLevel are queryParam and optional. So you can omit any or both of queryParams.
+   If no minLevel is given, it will search from 1 (Orchestra). also If no maxLevel, 
+   then it will search up to 4 (Balcony 2). If response take some time, it will return later asynchronously
 
 $ curl -X POST http://localhost:9797/ticket-service/v1/hold/num-seats/900/email/homer@simpson.com/venue?minLevel=1&maxLevel=3
 [1] 78454
@@ -110,7 +115,8 @@ C:\>curl -X POST "http://localhost:9797/ticket-service/v1/hold/num-seats/900/ema
 {"holdId":61,"customerEmail":"homer@simpson.com","details":[{"venueLevel":2,"numOfSeats":900}]}
 
 
--. request to reserve seat by holdId
+
+3) request to reserve seat by holdId
    endpoint: /ticket-service/v1/hold/{holdId}/email/{customerEmail}/reserve
    If reservation finished successfully, it will return confirmationCode
 
@@ -131,11 +137,11 @@ $ curl -X POST http://localhost:9797/ticket-service/v1/hold/51/email/bart@simpso
 
 
 
-* for testing convenience, admin endpoint is available to clean up all the seat holds and customer info.
+4) reset database with removing all the hold and customer data
+ for testing convenience, admin endpoint is available to clean up all the seat holds and customer info.
 
 $ curl -X DELETE http://localhost:9797/admin/seat-holds
 All SeatHolds with Customer Info have been deleted!
-
 
 
 
@@ -148,7 +154,7 @@ All SeatHolds with Customer Info have been deleted!
 This service also provides command line test mode to test this service without using server mode and internet.
 Below is example command with command line properties. log line and result will come in same console
 
--. command to find available seats
+1) command to find available seats
    command line property: --mode=test --action=search --level={venueLevel}
 
 $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher --spring.config.location=./application.properties --logging.file=./link.log --mode=test --action=search --level=2
@@ -166,8 +172,7 @@ Number Of Available Seats: 2000
 
 
 
-
--. command to find and hold seats
+2) command to find and hold seats
    command line property: --mode=test --action=hold --numSeats={numSeats} --minLevel={minLevel} --maxLevel={maxLevel} --email={customerEmail}
 
 $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher --spring.config.location=./application.properties --logging.file=./link.log --mode=test --action=hold --numSeats=20 --minLevel=1 --maxLevel=3 --email=homer@simpson.com
@@ -183,9 +188,11 @@ $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher 
 2015-11-19 23:36:41.652  INFO   --- [           main] c.w.ticketservice.aop.ServiceTracker     : [ReqOut] TicketServiceImpl ( SeatHold com.walmart.ticketservice.service.TicketService.findAndHoldSeats(int,Optional,Optional,String) )
 Seat HoldId: 150
 
+*minLevel and maxLevel are optional, so you can omit any or both of those like --mode=test --action=hold --numSeats=20 --minLevel=3 --email=homer@simpson.com
 
 
--. command to reserve seat by holdId
+
+3) command to reserve seat by holdId
    command line property: --mode=test --action=reserve --holdId={seatHoldId} --email={customerEmail}
 
 $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher --spring.config.location=./application.properties --logging.file=./link.log --mode=test --action=reserve --holdId=150 --email=homer@simpson.com
@@ -233,7 +240,7 @@ Customer Eamil Validation on SeatHold fail, seatHoldId: 150, customerEmail: marg
 
 
 
--. command to clean up seat hold data and customer info on database, for test convenience.
+4) command to clean up seat hold data and customer info on database, for test convenience.
    command line property: --mode=test --action=reset
 
 $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher --spring.config.location=./application.properties --logging.file=./link.log --mode=test --action=reset
