@@ -108,11 +108,17 @@ $ {"holdId":50,"customerEmail":"homer@simpson.com","details":[{"venueLevel":1,"n
 $ curl -X POST http://localhost:9797/ticket-service/v1/hold/num-seats/20/email/homer@simpson.com/venue?minLevel=3
 {"holdId":51,"customerEmail":"homer@simpson.com","details":[{"venueLevel":3,"numOfSeats":20}]}
 
+* if fail to hole any seat, it will return null for holdId
 
-* if you are on windows system with cygwin, then suggest to wrap the url by double quote
+$ curl -minLevel=1&maxLevel=4"st:9797/ticket-service/v1/hold/num-seats/900/email/homer@simpson.com/venue?minLevel=2
+{"holdId":null,"customerEmail":"homer@simpson.com","details":[]}
+
+
+* if you are on windows system with cygwin, then suggest to wrap the url by double quotes
 
 C:\>curl -X POST "http://localhost:9797/ticket-service/v1/hold/num-seats/900/email/homer@simpson.com/venue?minLevel=1&maxLevel=4"
 {"holdId":61,"customerEmail":"homer@simpson.com","details":[{"venueLevel":2,"numOfSeats":900}]}
+
 
 
 
