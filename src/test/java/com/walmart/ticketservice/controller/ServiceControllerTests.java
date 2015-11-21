@@ -35,7 +35,7 @@ public class ServiceControllerTests {
 
 	@Test
 	public void testGetAvailableSeats() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("/ticket-service/v1/venue/2/available-seats"))
+		mvc.perform(MockMvcRequestBuilders.get("/ticket-service/v1/available-seats/venue?level=2"))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andReturn();
 	}

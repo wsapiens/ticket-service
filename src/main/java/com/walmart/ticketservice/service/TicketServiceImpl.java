@@ -59,17 +59,47 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public int numSeatsAvailable(Optional<Integer> venueLevel) {
+		// clean up expired hold
+		removeExpiredSeatHold();
+
 		if(venueLevel.isPresent()) {
 			Venue venue = venueRepository.findOne(venueLevel.get());
 			if(null != venue) {
-				// find any reserved or holded seat for given level
-				List<SeatOrder> seatOrders = seatOrderRepository.findByVenue(venue);
-				int numberOfSeatTaken = seatOrders.stream().mapToInt(SeatOrder::getNumberOfSeats).sum();
-				int totalNumberOfSeat = venue.getNumberOfRow() * venue.getSeatsInRow();
-				return totalNumberOfSeat - numberOfSeatTaken;
+				return getAvailableSeatsInVenueLevel(venue);
 			}
+		} else {
+			// If no venueLevel is given, search total available seat through whole levels
+			List<Venue> venues = venueRepository.findAll();
+			return venues.stream().mapToInt(venue -> getAvailableSeatsInVenueLevel(venue)).sum();
 		}
 		return 0;
+	}
+
+	/**
+	 * Get available seat for given venue level
+	 * @param venue VenueLevel entity
+	 * @return number of available seats
+	 */
+	private int getAvailableSeatsInVenueLevel(Venue venue) {
+		List<SeatOrder> seatOrders = seatOrderRepository.findByVenue(venue);
+		int numberOfSeatTaken = seatOrders.stream().mapToInt(SeatOrder::getNumberOfSeats).sum();
+		int totalNumberOfSeat = venue.getNumberOfRow() * venue.getSeatsInRow();
+		return totalNumberOfSeat - numberOfSeatTaken;
+	}
+
+	/**
+	 * Clean up expired SeatHold
+	 */
+	private void removeExpiredSeatHold() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime expired = now.minusSeconds(serviceProperties.getSeatHoldExpireTime());
+		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
+
+		// Clean up expired holds
+		List<SeatHold> expiredHolds = seatHoldRepository.findByConfirmationCodeIsNullAndHoldTimeBefore(Date.from(expiredInstant));
+		if(!expiredHolds.isEmpty()) {
+			seatHoldRepository.delete(expiredHolds);
+		}
 	}
 
 	@Override
@@ -77,16 +107,6 @@ public class TicketServiceImpl implements TicketService {
 		if(StringUtils.isEmpty(customerEmail)) {
 			log.warn("Get empty email, so ignore hold request");
 			throw new CustomerValidationException();
-		}
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expired = now.minusSeconds(serviceProperties.getSeatHoldExpireTime());
-		Instant expiredInstant = expired.atZone(ZoneId.systemDefault()).toInstant();
-		Instant nowInstant = now.atZone(ZoneId.systemDefault()).toInstant();
-
-		// Clean up expired holds
-		List<SeatHold> expiredHolds = seatHoldRepository.findByConfirmationCodeIsNullAndHoldTimeBefore(Date.from(expiredInstant));
-		if(!expiredHolds.isEmpty()) {
-			seatHoldRepository.delete(expiredHolds);
 		}
 
 		// Retreive venue and customer info
@@ -124,7 +144,7 @@ public class TicketServiceImpl implements TicketService {
 		if( seatHold.getSeatOrders().isEmpty() ) {
 			log.warn("fail to hold any seat in levels for customer email: ".concat(customerEmail));
 		} else {
-			seatHold.setHoldTime(Date.from(nowInstant));
+			seatHold.setHoldTime(new Date());
 			seatHold = seatHoldRepository.save(seatHold);
 			String message = new StringBuilder("hold ")
 					.append(numSeats - numSeatsToHold)
@@ -161,7 +181,7 @@ public class TicketServiceImpl implements TicketService {
 			throw new CustomerValidationException(errorMessage.toString());
 		}
 
-		// verify seatHold
+		// verify seatHold and reservation status
 		if( StringUtils.isEmpty(seatHold.getConfirmationCode()) ) {
 			if(seatHold.getHoldTime().before(Date.from(expiredInstant))) {
 				String errorMessage = String.join(": ", "fail on reservation, the SeatHold is expired, seatHoldId", String.valueOf(seatHoldId));

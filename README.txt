@@ -149,7 +149,7 @@ This service also provides command line test mode to test this service without u
 Below is example command with command line properties. log line and result will come in same console
 
 -. command to find available seats
-   command line property: --action=search --level={venueLevel}
+   command line property: --mode=test --action=search --level={venueLevel}
 
 $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher --spring.config.location=./application.properties --logging.file=./link.log --mode=test --action=search --level=2
 2015-11-19 23:32:57.248  INFO   --- [           main] com.walmart.ticketservice.Application    : run in command line test mode
@@ -161,6 +161,9 @@ $ java -cp ticket-service-0.0.1.jar org.springframework.boot.loader.JarLauncher 
 2015-11-19 23:33:07.673  INFO   --- [           main] c.w.ticketservice.aop.ServiceTracker     : [ReqIn ] TicketServiceImpl ( int com.walmart.ticketservice.service.TicketService.numSeatsAvailable(Optional) )
 2015-11-19 23:33:08.212  INFO   --- [           main] c.w.ticketservice.aop.ServiceTracker     : [ReqOut] TicketServiceImpl ( int com.walmart.ticketservice.service.TicketService.numSeatsAvailable(Optional) )
 Number Of Available Seats: 2000
+
+*level is optional, so you can run this only with --mode=test --action=search
+
 
 
 

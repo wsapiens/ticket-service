@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.walmart.ticketservice.consts.CommandType;
 import com.walmart.ticketservice.database.model.SeatHold;
@@ -70,8 +71,8 @@ public class CommandHandler {
 	 * @return number of available seats
 	 */
 	private int searchNumberOfAvailableSeats(@SuppressWarnings("rawtypes") PropertySource ps) {
-		Integer level = Integer.valueOf( (String)ps.getProperty(LEVEL.toString()) );
-		Optional<Integer> venueLevel = (level != null) ? Optional.of(level) : Optional.empty();
+		String levelString = (String) ps.getProperty(LEVEL.toString());
+		Optional<Integer> venueLevel = StringUtils.isEmpty(levelString) ? Optional.empty() : Optional.of(Integer.valueOf( levelString ));
 		return ticketService.numSeatsAvailable(venueLevel);
 	}
 
@@ -82,12 +83,12 @@ public class CommandHandler {
 	 */
 	private int findAndHoldSeats(@SuppressWarnings("rawtypes") PropertySource ps) {
 		Integer numSeats = Integer.valueOf( (String) ps.getProperty(NUM_SEATS.toString()) );
-		Integer min = Integer.valueOf( (String) ps.getProperty(MIN_LEVEL.toString()) );
-		Integer max = Integer.valueOf( (String) ps.getProperty(MAX_LEVEL.toString()) );
+		String minLevelString = (String) ps.getProperty(MIN_LEVEL.toString());
+		String maxLevelString = (String) ps.getProperty(MAX_LEVEL.toString());
 		String customerEmail = (String) ps.getProperty(EMAIL.toString());
 
-		Optional<Integer> minLevel = ( min != null ) ? Optional.of(min) : Optional.empty();
-		Optional<Integer> maxLevel = ( max != null ) ? Optional.of(max) : Optional.empty();
+		Optional<Integer> minLevel = StringUtils.isEmpty(minLevelString) ? Optional.empty() : Optional.of(Integer.valueOf(minLevelString));
+		Optional<Integer> maxLevel = StringUtils.isEmpty(maxLevelString) ? Optional.empty() : Optional.of(Integer.valueOf(maxLevelString));
 		SeatHold seatHold = ticketService.findAndHoldSeats(numSeats, minLevel, maxLevel, customerEmail);
 		return seatHold.getId();
 	}

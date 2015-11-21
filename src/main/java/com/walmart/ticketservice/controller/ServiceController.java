@@ -38,10 +38,11 @@ public class ServiceController {
 	@Autowired
 	private TicketService ticketService;
 
-	@RequestMapping(value="/venue/{level}/available-seats", method=RequestMethod.GET)
-	public DeferredResult<AvailableSeatsResult> getAvailableSeats(@PathVariable Integer level) {
+	@RequestMapping(value="/available-seats/venue", method=RequestMethod.GET)
+	public DeferredResult<AvailableSeatsResult> getAvailableSeats(@RequestParam(value="level", required=false) Integer level) {
 		DeferredResult<AvailableSeatsResult> result = new DeferredResult<>();
-		int numOfAvailSeats = ticketService.numSeatsAvailable(Optional.of(level));
+		Optional<Integer> venueLevel = (level != null) ? Optional.of(level) : Optional.empty();
+		int numOfAvailSeats = ticketService.numSeatsAvailable(venueLevel);
 		result.setResult( new AvailableSeatsResult(level, numOfAvailSeats) );
 		return result;
 	}
